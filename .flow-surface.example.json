@@ -1,0 +1,16 @@
+{
+  "architectureLaw": "ARCHITECTURE.md",
+  "contextDocs": ["docs/glossary.md"],
+  "scopePredicate": "tenant_id",
+  "persistenceInvariant": "All writes flow through the queue consumer; services never write directly.",
+  "trustBoundaries": ["HTTP handlers", "queue consumers", "webhook receivers"],
+  "testPathPatterns": [
+    "src/(.*)\\.ts -> src/__tests__/$1.test.ts",
+    "app/(.*)\\.py -> tests/test_$1.py"
+  ],
+  "coverageThreshold": 0.8,
+  "reviewOutputDir": "reviews/",
+  "agents": { "default": "Explore" },
+  "remote": { "mode": "local", "exec": null },
+  "verification": { "ui": "none", "db": null, "serviceHealth": null }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "flow-surface",
+  "description": "Surface-based code review and gated agentic development workflows. Bugs are dents, vulnerabilities are bulges, and the invariant is smoothness.",
+  "owner": { "name": "adarshpuri20", "url": "https://github.com/adarshpuri20" },
+  "metadata": { "pluginRoot": "./plugins" },
+  "plugins": [
+    {
+      "name": "flow-surface-review",
+      "source": "./plugins/flow-surface-review",
+      "description": "An 11-gate cross-file code review that checks what your change deformed, not just what it touched. Zero config.",
+      "category": "code-review",
+      "tags": ["code-review", "security", "quality-gates", "refactoring"],
+      "license": "MIT"
+    },
+    {
+      "name": "phase-conductor",
+      "source": "./plugins/phase-conductor",
+      "description": "Plan, execute, and graduate multi-sub-phase work with checkpoint state that survives compaction and parallel isolated lanes.",
+      "category": "workflow",
+      "tags": ["workflow", "orchestration", "worktree", "checkpointing"],
+      "license": "MIT"
+    },
+    {
+      "name": "readiness-audit",
+      "source": "./plugins/readiness-audit",
+      "description": "Versioned production-readiness audits with a permanent gate ledger and finding lifecycle tracking.",
+      "category": "workflow",
+      "tags": ["audit", "production-readiness", "tech-debt", "verification"],
+      "license": "MIT"
+    }
+  ]
+}
