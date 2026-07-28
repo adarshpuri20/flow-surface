@@ -2,8 +2,8 @@
   "name": "readiness-audit",
   "displayName": "Readiness Audit",
   "description": "Versioned production-readiness audits with a permanent gate ledger and finding lifecycle tracking.",
-  "version": "0.1.0",
-  "author": { "name": "Forest" },
+  "version": "0.1.1",
+  "author": { "name": "adarshpuri20" },
   "license": "MIT",
   "keywords": ["audit","production-readiness","verification"]
 }
