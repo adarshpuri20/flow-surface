@@ -39,6 +39,15 @@ if the first one earns your trust.
 /flow-surface-review:review main
 ```
 
+## Example
+
+A [blind run against a stranger codebase](examples/cal-diy-pr-29724/README.md) —
+cal.diy PR #29724, zero config, fresh headless session, a target that had already
+passed CodeRabbit's automated review and a human LGTM. The run surfaced a silent
+behavioral widening and a competing-repository HIGH that both had missed, then
+recorded itself unconverged rather than rubber-stamping its own review. Artifact
+committed verbatim, divergences from spec documented alongside it.
+
 ## The review
 
 Eleven gates in three tiers, each tier feeding the next:
