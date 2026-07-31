@@ -10,9 +10,11 @@ produced by `verify.py`; run it to reproduce all matrices, theorem checks, and f
 ## Abstract
 
 Flow Surface Theory (FST) models a software system's communication boundaries as a
-surface and classifies defects by geometry: a **dent** is a flow that terminates before
-its intended terminus (a bug); a **bulge** is a flow that extends beyond its intended
-boundary (a vulnerability). This document gives the discrete formal core of that model.
+surface and classifies defects by geometry: a **dent** is a surface region where flows
+terminate short of their intended terminus (a bug); a **bulge** is a surface region
+where flows extend beyond their intended boundary (a vulnerability). A flow is the
+traversal — the path being walked; dents and bulges are features of the standing
+surface that flows reveal. This document gives the discrete formal core of that model.
 We define a **deformation matrix** $D = R - R^{*}$, the difference between actual and
 intended reachability, and prove four theorems: (1) a **polarity theorem** — edge
 additions can create only bulges and edge deletions only dents, grounding the
@@ -53,8 +55,12 @@ $R^{*}$ its closure. The **deformation matrix** is
 
 $$D \;=\; R - R^{*} \;\in\; \{-1, 0, +1\}^{n \times n}.$$
 
-The **bulge set** is $B = \{(i,j) : D_{ij} = +1\}$ — flows that exist but should not.
-The **dent set** is $N = \{(i,j) : D_{ij} = -1\}$ — flows that should exist but do not.
+The **bulge set** is $B = \{(i,j) : D_{ij} = +1\}$ — surface regions where reach
+extends beyond the intended boundary: at least one unintended traversal exists.
+The **dent set** is $N = \{(i,j) : D_{ij} = -1\}$ — surface regions where reach falls
+short: every intended traversal is broken. A flow is a single traversal (a path); an
+entry of $D$ is a feature of the surface, aggregating over all flows between the pair —
+which is why one dented region can be revealed by many distinct flows.
 The system is **flow-smooth** iff $D = 0$, i.e. $R = R^{*}$.
 
 **Definition 4 (Plane-level deformation).** $d = A - A^{*}$ is the *edge-level*
