@@ -11,6 +11,9 @@ can deform:
 >
 > **A vulnerability is a bulge.** A flow extends past its boundary — it reaches further than it should.
 
+More precisely: dents and bulges are regions of the surface; flows are the traversals
+that reveal them.
+
 The asymmetry is the useful part: **a dent fails loudly, a bulge fails silently.** Tests
 are written against intended behaviour, so they catch dents and are structurally blind to
 bulges. A review that only hunts dents will pass a system full of bulges.

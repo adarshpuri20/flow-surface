@@ -44,8 +44,10 @@ no vertices, no discontinuities. Every flow completes at exactly its expected le
 
 ### Bugs are dents
 
-A bug is a flow that **breaks before completing**. The chain terminates early. The radius
-at that point is shorter than ideal. The surface has a local concavity.
+A **dent** is a surface region where flows break before completing — the traversal
+terminates early, the radius at that position is shorter than ideal, and the surface
+shows a local concavity. The flow is the motion; the dent is the standing feature of
+the surface it reveals. Many distinct flows can reveal the same dent.
 
 ```
 Expected: component -> client -> service -> domain -> response
@@ -55,8 +57,10 @@ Actual:   component -> client -> service -> ERROR (flow stopped)
 
 ### Vulnerabilities are bulges
 
-A vulnerability is a flow that **extends beyond its intended boundary**. Data reaches
-further than it should. The radius is longer than ideal. The surface has a local convexity.
+A **bulge** is a surface region where flows extend beyond their intended boundary —
+data reaches further than it should, the radius is longer than ideal, and the surface
+shows a local convexity. One over-reaching traversal is enough to raise a bulge; the
+region stands whether or not any flow is currently crossing it.
 
 ```
 Expected: request -> scoped read -> response
@@ -157,8 +161,9 @@ This means:
    is worse than a slightly imperfect fix that preserves smoothness.
 2. **Simulate neighbours, not just the point.** Validate against every flow intersecting
    the fix, not only the flow that broke.
-3. **Dents are bugs, bulges are vulnerabilities.** Short flows break functionality. Long
-   flows expose data. Both break smoothness.
+3. **Dents are bugs, bulges are vulnerabilities.** Flows that fall short reveal dents
+   that break functionality; flows that overreach reveal bulges that expose data. Both
+   break smoothness.
 4. **Parallel simulation is how you scale.** Each agent simulates a region; integration
    validates the global surface.
 5. **The ideal surface emerges — it isn't designed.** Design toward smoothness, not toward
