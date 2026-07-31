@@ -27,6 +27,10 @@ workflow.
 | D-007 | No pagination on export | phase-18 | LOW | >10k rows |
 ```
 
+Both paths — `research/GATE-LEDGER.md` and `plans/DEBT-LEDGER.md` — are conventions
+inside the **host project** being audited; they are not paths in this marketplace
+repository.
+
 They cross-reference: **open debt lowers a gate's confidence score.** A gate that is
 technically `UNLOCKED` but sits on three `MEDIUM` debt items is not the same as a clean one.
 

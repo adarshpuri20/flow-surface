@@ -2,7 +2,7 @@
   "name": "phase-conductor",
   "displayName": "Phase Conductor",
   "description": "Plan, execute, and graduate multi-sub-phase work with checkpoint state and parallel isolated lanes.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": { "name": "adarshpuri20" },
   "license": "MIT",
   "keywords": ["workflow","orchestration","worktree"]

@@ -32,6 +32,10 @@ consumed most of the main one. Where subagents aren't available, run them sequen
 Skip rules are per-gate and stated below. A skipped gate is recorded as `SKIPPED` with its
 reason — never silently omitted.
 
+Per-gate verdicts come from a fixed vocabulary: `APPROVE`, `APPROVE_WITH_NOTES`,
+`CONCERNS` (a substantive worry that does not block on its own — must be backed by at
+least one finding), `BLOCK`, or `SKIPPED(reason)`.
+
 ---
 
 ## Tier 1 — Point quality
@@ -136,6 +140,14 @@ not the code. Document in the review file:
 Then **stop and present to the human** as an explicit gate. The human decides: accept the
 carry risk, or block for manual intervention. Do not loop a fourth time.
 
+### Constrained exit
+
+When the environment denies fix application — a write-permission gate, a read-only
+checkout — do not simulate convergence and do not keep looping: record the change as
+**NOT CONVERGED** with the constraint stated, specify the fix in the artifact instead
+of applying it, and let the stopping rule dispose of the result. A live instance is the
+marketplace repo's `examples/cal-diy-pr-29724/` run, which exited exactly this way.
+
 ### Stopping rule
 
 | Blast radius | SMOOTH | NOT SMOOTH |
@@ -156,6 +168,11 @@ Two artifacts. Templates in `references/output-templates.md`.
   disposition, known debt carried forward.
 - `smoothness-achieved-<id>.md` — written **only** on convergence. Records iterations
   used, planes traced, and per-plane flow status.
+
+Before writing the artifact, run a **self-consistency check**: the per-gate finding
+counts in the gate table must reconcile with the deduplicated findings-by-severity
+sections. Annotate every cross-gate convergence explicitly (finding N → Gates X+Y) so
+the two views sum consistently; the findings list is authoritative.
 
 **No smoothness artifact means the change has not converged.** Do not merge on the
 strength of passing gates alone — the gates find deformations, the loop proves they were

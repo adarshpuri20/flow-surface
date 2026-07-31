@@ -41,6 +41,15 @@ APPROVE | APPROVE_WITH_NOTES | BLOCK
 Every gate row needs evidence — a file and line, a query result, a log excerpt. A gate
 marked `APPROVE` with no evidence is an unreviewed gate.
 
+### Per-gate verdict vocabulary
+
+A gate row's verdict is exactly one of:
+
+`APPROVE` | `APPROVE_WITH_NOTES` | `CONCERNS` | `BLOCK` | `SKIPPED(reason)`
+
+`CONCERNS` marks a substantive worry that does not block on its own; every `CONCERNS`
+verdict must be backed by at least one finding in the severity sections.
+
 ## `smoothness-achieved-<id>.md`
 
 Written **only** on convergence.

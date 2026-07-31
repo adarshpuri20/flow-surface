@@ -90,6 +90,7 @@ remote execution, browser adapter. Every key is optional; absent keys degrade to
 stack-neutral defaults rather than failing.
 
 Full schema: `plugins/flow-surface-review/skills/surface-review/references/config-schema.md`
+A ready-to-copy starting point: [`.flow-surface.example.json`](.flow-surface.example.json)
 
 ## Ideas worth stealing even if you never install this
 
