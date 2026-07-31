@@ -15,6 +15,9 @@ The asymmetry is the useful part: **a dent fails loudly, a bulge fails silently.
 are written against intended behaviour, so they catch dents and are structurally blind to
 bulges. A review that only hunts dents will pass a system full of bulges.
 
+A formal treatment with four proven theorems and a reproducible verification script
+lives in [`docs/formal/`](docs/formal/FORMAL.md).
+
 These plugins turn that model into something you can run.
 
 ## Three plugins, increasing commitment
