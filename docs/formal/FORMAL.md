@@ -64,7 +64,50 @@ reaches a component it should not. The **dent set** is $N = \{(i,j) : D_{ij} = -
 surface regions where an intended flow fails to reach. Each entry is a feature of the
 $(i,j)$ region, not a flow itself; a single dent may be witnessed by the failure of many
 distinct paths.
+
+**Quantifier asymmetry.** Because $R_{ij}$ is a disjunction over all $i \rightsquigarrow j$
+paths, the two defect classes carry opposite quantifiers:
+
+$$(i,j) \in B \iff \exists \text{ an unintended traversal}, \qquad
+(i,j) \in N \iff \forall \text{ intended traversals, each is broken}.$$
+
+A bulge needs **one** path to exist; a dent needs **every** path to fail. This is the
+same asymmetry as Theorem 1 seen from the logical side, and it explains the difference
+in cost: a single stray edge suffices to open a bulge, whereas denting a region requires
+severing all redundancy. Systems accumulate bulges cheaply and dents expensively —
+which is precisely backwards from how much attention each usually receives.
 The system is **flow-smooth** iff $D = 0$, i.e. $R = R^{*}$.
+
+### 1.1 Representation: one object, two coordinate systems
+
+The deformation field admits two renderings, and they are **not two different surfaces**:
+
+| Coordinates | Construction | Smooth state |
+| :--- | :--- | :--- |
+| **Radial** (primitive) | $r(i,j) = 1 + \varepsilon D_{ij}$, plotted as a closed surface | the **sphere** $r = 1$ |
+| **Cartesian** (projection) | $z = D_{ij}$ over the index grid | the plane $z = 0$ |
+
+The radial form is the primitive one, and the one the informal model describes: the
+system is a *closed* surface, flows radiate outward from the origin at rest, and the
+radius in each angular direction is how far the flow travels. A perfect system does not
+become flat — it still has flows and still has reach in every direction. What it has is
+**uniform** reach, and uniform reach on a closed surface is a sphere. Bulges push the
+radius outward, dents pull it inward, and $\lVert D \rVert_1 = 0$ is exactly sphericity.
+
+The Cartesian form is a **projection** of the radial form. It is convenient — diffing
+two matrices is cheap, and the flat plot is legible — but it is lossy in the way every
+flattening of a closed surface is lossy: by Gauss's *Theorema Egregium*, a sphere admits
+no isometric map to the plane. Curvature is intrinsic and cannot be discarded by choice
+of chart. Statements like "smoothness is the flat plane" are therefore statements about
+the projection, not about the system.
+
+One honest caveat attaches to the radial rendering and not to the Cartesian one: the
+assignment of matrix indices $(i,j)$ to angular coordinates $(\theta, \varphi)$ is a
+**chosen layout**, analogous to a map projection's choice of graticule. The radial
+*deviation* is computed data; the *placement* on the sphere is presentational, and
+different assignments yield differently-shaped surfaces with identical defect content.
+Sphericity itself is layout-invariant — $r \equiv 1$ under every assignment iff
+$D = 0$ — so the smooth case is exactly the case in which the caveat does not bite.
 
 **Definition 4 (Plane-level deformation).** $d = A - A^{*}$ is the *edge-level*
 deformation: direct communications that violate or omit declared planes, independent
