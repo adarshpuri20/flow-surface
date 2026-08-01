@@ -189,7 +189,7 @@ $\bigcup_k \mathrm{Anc}(u_k) \times \mathrm{Desc}(v_k)$, all computed in the
 in neither box, because the witnessing path chains through *both* new edges — the
 cross term is structurally absent from every per-edge box. Empirically the naive
 union fails in 264 of 1,500 randomized multi-edge trials, roughly 18%
-(`verify_theorems.py`, deterministic seeds).
+(`verify.py --theorems`, deterministic seeds).
 
 The correct rule is **sequential**: order the added edges arbitrarily, apply Theorem 2
 one edge at a time *recomputing the closure between steps* — so each step is genuinely
@@ -374,7 +374,7 @@ machinery; this section runs the same machinery against production code.
 production change — cal.diy PR #29724, the subject of this marketplace's example review
 (`examples/cal-diy-pr-29724/`). Node and edge lists come from a two-commit evidence
 extraction whose 127 file:line citations were each re-verified against the repository;
-`verify_5b.py` recomputes and asserts everything below.
+`verify.py --real` recomputes and asserts everything below.
 
 **The declaration.** Real repositories rarely declare $A^{*}$. Here the PR's own base
 commit serves as the declaration: $A^{*}$ := the graph at `f3284f581f` (pre-refactor),
@@ -494,22 +494,26 @@ language-model agent can run against a real diff with evidence obligations.
 
 ## 9. Reproducibility
 
-`python3 verify.py` recomputes every matrix, asserts every theorem instance
-(localization support and bound, the closed form for $R'$, the dent
-characterization, cut counts and energies, final $D = 0$), and regenerates all four
-figures (Figures 3–6). The script has no dependencies beyond numpy and matplotlib and finishes in
-under a second. If any assertion fails, this document is wrong.
+`python3 verify.py` is the single asserting artifact, with three modes that all run
+(in order) when no flag is given, exiting non-zero if any assertion fails:
 
-`verify_5b.py` does the same for §5b's real-code matrices and Figure 9.
-`verify_theorems.py` tests the theorems as universally quantified *properties* rather
-than as instances: roughly 13,400 randomized trials under deterministic seeds plus
-seven degenerate edge cases, Theorem 3 verified by independent path enumeration
-rather than by the closure it is stated in, and Corollary 2.1's minimal
-counterexample and sequential bound locked in as permanent assertions. It produces
-no figures and no new claims.
-`sphere_test.py` and `visualize3d.py` are rendering-only (Figures 1, 2, 7, and 8): they assert
-nothing and compute no new claims. All scripts are standalone — none imports another —
-so the asserted artifacts stay separate from the presentational ones.
+- `--theorems` — the theorems as universally quantified *properties* rather than
+  instances: roughly 13,400 randomized trials under deterministic seeds plus seven
+  degenerate edge cases, Theorem 3 verified by independent path enumeration rather
+  than by the closure it is stated in, and Corollary 2.1's minimal counterexample
+  and sequential bound locked in as permanent assertions.
+- `--example` — §5's synthetic system: every matrix recomputed, every theorem
+  instance asserted (localization support and bound, the closed form for $R'$, the
+  dent characterization, cut counts and energies, final $D = 0$), Figures 3–6
+  regenerated.
+- `--real` — §5b's cal.diy matrices and assertions, Figure 9 regenerated.
+
+The script has no dependencies beyond numpy and matplotlib. If any assertion fails,
+this document is wrong.
+
+`sphere_test.py` and `visualize3d.py` are rendering-only (Figures 1, 2, 7, and 8):
+they assert nothing and compute no new claims. The asserting artifact and the
+presentational scripts are deliberately separate files.
 
 ---
 
