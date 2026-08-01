@@ -7,7 +7,7 @@ That makes it a *surface* in the one place the word is literal rather than metap
 z = D[i][j], bulges are peaks (+1), dents are valleys (-1), smooth is the flat plane z=0.
 
 Standalone by design: verify.py is the asserted artifact and is not imported or modified.
-Run: python3 visualize3d.py   (writes figures/fig5_*.png, figures/fig6_*.png)
+Run: python3 visualize3d.py   (writes figures/fig2_*.png, fig7_*.png, fig8_*.png)
 """
 import numpy as np
 import matplotlib
@@ -69,7 +69,7 @@ def bars3d(ax, D, title, subtitle):
     ax.set_title(f"{title}\n{subtitle}", fontsize=9.5, pad=8)
     ax.xaxis.pane.set_alpha(.04); ax.yaxis.pane.set_alpha(.04); ax.zaxis.pane.set_alpha(.04)
 
-# ---- Fig 5: the smoothness loop as three surfaces -------------------------
+# ---- Fig 7: the smoothness loop as three surfaces -------------------------
 fig = plt.figure(figsize=(15, 4.9))
 for k, (D, t, s) in enumerate([
         (D0, "Iteration 0 — NOT SMOOTH", "6 bulges  ‖D‖₁=6   tenant-A reaches tenant-B data"),
@@ -79,10 +79,10 @@ for k, (D, t, s) in enumerate([
 fig.suptitle("The deformation matrix as a surface:  z = D[i][j]   —   peaks are bulges, valleys are dents, flat is smooth",
              fontsize=11.5, y=.99)
 fig.tight_layout(rect=[0, 0, 1, .93])
-fig.savefig("figures/fig5_surface_3d_loop.png", dpi=165)
+fig.savefig("figures/fig7_surface_3d_loop.png", dpi=165)
 plt.close(fig)
 
-# ---- Fig 6: the moved discontinuity, single large view --------------------
+# ---- Fig 8: the moved discontinuity, single large view --------------------
 fig = plt.figure(figsize=(8.4, 6.4))
 ax = fig.add_subplot(111, projection="3d")
 bars3d(ax, D1, "The moved discontinuity",
@@ -93,10 +93,10 @@ ax.text2D(.02, .04,
           "This is why the loop inspects entry polarity, not the norm.",
           transform=ax.transAxes, fontsize=8.6, color="#495057", style="italic")
 fig.tight_layout()
-fig.savefig("figures/fig6_moved_discontinuity_3d.png", dpi=165)
+fig.savefig("figures/fig8_moved_discontinuity_3d.png", dpi=165)
 plt.close(fig)
 
-# ---- Fig 7: interpolated view, explicitly labelled as illustrative --------
+# ---- Fig 2: interpolated view, explicitly labelled as illustrative --------
 def blur(M, passes=28):
     """Gaussian-ish smoothing by repeated 3x3 averaging, on an upsampled grid."""
     U = np.kron(M.astype(float), np.ones((6, 6)))
@@ -119,14 +119,14 @@ for k, (D, t) in enumerate([(D0, "Iteration 0"), (D1, "Iteration 1 (naive)"), (D
     ax.set_title(t, fontsize=10)
     for pane in (ax.xaxis.pane, ax.yaxis.pane, ax.zaxis.pane):
         pane.set_alpha(.03)
-fig.suptitle("Illustrative only — interpolated for intuition. The rigorous object is discrete (Fig 5);\n"
+fig.suptitle("Illustrative only — interpolated for intuition. The rigorous object is discrete (Fig 7);\n"
              "no manifold is claimed, and the interpolation has no formal content.",
              fontsize=10, y=.99, color="#868e96")
 fig.tight_layout(rect=[0, 0, 1, .88])
-fig.savefig("figures/fig7_illustrative_interpolation.png", dpi=165)
+fig.savefig("figures/fig2_illustrative_interpolation.png", dpi=165)
 plt.close(fig)
 
-print("wrote figures/fig5_surface_3d_loop.png")
-print("wrote figures/fig6_moved_discontinuity_3d.png")
-print("wrote figures/fig7_illustrative_interpolation.png")
+print("wrote figures/fig7_surface_3d_loop.png")
+print("wrote figures/fig8_moved_discontinuity_3d.png")
+print("wrote figures/fig2_illustrative_interpolation.png")
 print("\nnote: verify.py untouched; this script asserts nothing and computes no new claims.")

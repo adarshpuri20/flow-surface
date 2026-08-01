@@ -94,6 +94,6 @@ fig.text(0.5, 0.035,
          "angular position is a chosen layout (like a map projection), not derived geometry.",
          ha="center", fontsize=8.4, color="#868e96", style="italic")
 fig.tight_layout(rect=[0,0.06,1,0.93])
-fig.savefig("figures/fig8_sphere_topology.png", dpi=165)
+fig.savefig("figures/fig1_sphere_topology.png", dpi=165)
 plt.close(fig)
-print("wrote figures/fig8_sphere_topology.png")
+print("wrote figures/fig1_sphere_topology.png")

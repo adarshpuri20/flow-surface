@@ -30,7 +30,14 @@ a dent, which makes the review question "did the fix move the discontinuity?"
 decidable; and (4) a **cut-count theorem** connecting compartment isolation to graph
 Laplacian energy. A worked seven-node multi-tenant example exercises every theorem
 with deterministic matrices, including a numerically verified instance of a fix that
-reduces total deformation while still moving the discontinuity. We position the
+reduces total deformation while still moving the discontinuity. The theory is then
+tested against a real merged production change — cal.diy PR #29724, reconstructed
+from adversarially verified file:line evidence — computed at two granularities
+(§5b). The component-level model yields a single real bulge and a production
+instance of §4's plane-level deformation that reachability cannot see; the
+branch-level model expresses the PR's actual defect, and the component-level model
+provably cannot — the granularity limitation demonstrated on real code rather than
+asserted. We position the
 underlying flow machinery within fifty years of prior art (Denning's lattice model,
 non-interference, program slicing, abstract interpretation) and state honestly which
 parts of FST are formal and which are operational engineering.
@@ -109,7 +116,9 @@ different assignments yield differently-shaped surfaces with identical defect co
 Sphericity itself is layout-invariant — $r \equiv 1$ under every assignment iff
 $D = 0$ — so the smooth case is exactly the case in which the caveat does not bite.
 
-![Fig 8 — §5's synthetic example rendered radially: bulges push outward, the naive fix's dent pulls inward, the correct fix restores the sphere](figures/fig8_sphere_topology.png)
+![Fig 1 — §5's synthetic example rendered radially: bulges push outward, the naive fix's dent pulls inward, the correct fix restores the sphere](figures/fig1_sphere_topology.png)
+
+![Fig 2 — the Cartesian projection interpolated for intuition only: no manifold is claimed, and the interpolation has no formal content (the rigorous object is discrete, Fig 7)](figures/fig2_illustrative_interpolation.png)
 
 **Definition 4 (Plane-level deformation).** $d = A - A^{*}$ is the *edge-level*
 deformation: direct communications that violate or omit declared planes, independent
@@ -254,7 +263,7 @@ RepoB→DB_B is intended infrastructure serving the tenant-B entry point (not mo
 **Actual** $A$: all of the above **plus the defect edge Svc→RepoB** — a query whose
 tenant predicate is missing routes into the tenant-B repository.
 
-![Fig 1 — intended vs actual system graphs](figures/fig1_graphs.png)
+![Fig 3 — intended vs actual system graphs](figures/fig3_graphs.png)
 
 Closures and deformation (verbatim from `verify.py`):
 
@@ -282,7 +291,7 @@ RepoA..DB_B                 (all zero)
 **UI_A→DB_B: a tenant-A user reaches tenant-B data**. Dent set $N = \varnothing$, exactly as Theorem 1 requires
 for a pure edge addition. $\lVert D \rVert_{1} = 6$.
 
-![Fig 2 — R*, R, and the deformation matrix](figures/fig2_matrices.png)
+![Fig 4 — R*, R, and the deformation matrix](figures/fig4_matrices.png)
 
 **Theorem 2 verified on this instance.**
 $\mathrm{Anc}^{*}(\text{Svc}) = \{$UI_A, API, Svc$\}$,
@@ -294,7 +303,7 @@ $\beta = 6/49 = 0.122$; the deformed pairs cross the tenant compartment
 ($x_{\text{RepoB}} = x_{\text{DB\_B}} = 1$, all others 0), so the deterministic rule
 classifies the change **HIGH**.
 
-![Fig 3 — blast radius: Anc×Desc on the graph and boxed on D](figures/fig3_blast_radius.png)
+![Fig 5 — blast radius: Anc×Desc on the graph and boxed on D](figures/fig5_blast_radius.png)
 
 **Theorem 4 verified.** Cut count $C(A^{*}, x) = 0$, $C(A, x) = 1$; Laplacian energy
 $E(A^{*}, x) = 0$, $E(A, x) = 1$. One boundary-crossing edge — the defect — and the
@@ -325,11 +334,21 @@ warning: a fix that improves the aggregate can still deform a neighbor.
 **Iteration 2 — correct fix.** Restore RepoB→DB_B; delete the defect edge Svc→RepoB
 (restore the tenant predicate). Recompute: $D = 0$, $C = 0$. **SMOOTH.**
 
-![Fig 4 — the smoothness loop: bulges → moved discontinuity → smooth](figures/fig4_smoothness_loop.png)
+![Fig 6 — the smoothness loop: bulges → moved discontinuity → smooth](figures/fig6_smoothness_loop.png)
+
+The same three states, rendered as the surface they are ($z = D_{ij}$, one bar per
+matrix entry — the discrete object, no interpolation):
+
+![Fig 7 — the smoothness loop as 3D bar surfaces: peaks are bulges, valleys are dents, flat is smooth](figures/fig7_surface_3d_loop.png)
+
+![Fig 8 — the moved discontinuity in single view: ‖D‖₁ fell 6→4, yet three bulges survive and a new dent opens at (RepoB, DB_B)](figures/fig8_moved_discontinuity_3d.png)
 
 ---
 
 ## 5b. The real deformation: cal.diy PR #29724 (all values computed)
+
+The pairing of this section with §5 is deliberate: the synthetic example proves the
+machinery; this section runs the same machinery against production code.
 
 §5's system is synthetic. This section computes the same objects from a real, merged
 production change — cal.diy PR #29724, the subject of this marketplace's example review
@@ -458,11 +477,11 @@ language-model agent can run against a real diff with evidence obligations.
 `python3 verify.py` recomputes every matrix, asserts every theorem instance
 (localization support and bound, the closed form for $R'$, the dent
 characterization, cut counts and energies, final $D = 0$), and regenerates all four
-figures. The script has no dependencies beyond numpy and matplotlib and finishes in
+figures (Figures 3–6). The script has no dependencies beyond numpy and matplotlib and finishes in
 under a second. If any assertion fails, this document is wrong.
 
 `verify_5b.py` does the same for §5b's real-code matrices and Figure 9.
-`sphere_test.py` and `visualize3d.py` are rendering-only (Figures 5–8): they assert
+`sphere_test.py` and `visualize3d.py` are rendering-only (Figures 1, 2, 7, and 8): they assert
 nothing and compute no new claims. All scripts are standalone — none imports another —
 so the asserted artifacts stay separate from the presentational ones.
 

@@ -172,34 +172,34 @@ def draw_D(ax, M, title, box_rc=None):
                 ax.add_patch(plt.Rectangle((j-.5,i-.5),1,1, fill=False, ec="#f08c00", lw=2))
     ax.set_title(title, fontsize=9.5)
 
-# Fig 1: intended vs actual graphs
+# Fig 3: intended vs actual graphs
 fig, axs = plt.subplots(1, 2, figsize=(11, 3.4))
 draw_graph(axs[0], E_star, "Intended  $A^{*}$  (tenant-A slice)")
 draw_graph(axs[1], E_act,  "Actual  $A$  — defect edge Svc→RepoB (missing tenant predicate)",
            defect=("Svc","RepoB"))
-fig.tight_layout(); fig.savefig("figures/fig1_graphs.png", dpi=170); plt.close(fig)
+fig.tight_layout(); fig.savefig("figures/fig3_graphs.png", dpi=170); plt.close(fig)
 
-# Fig 2: R*, R, D heatmaps
+# Fig 4: R*, R, D heatmaps
 fig, axs = plt.subplots(1, 3, figsize=(12.5, 3.9))
 draw_D(axs[0], R_star, "$R^{*}$ (intended reachability)")
 draw_D(axs[1], R_act,  "$R$ (actual reachability)")
 draw_D(axs[2], D,      "$D = R - R^{*}$   (+1 = bulge)")
-fig.tight_layout(); fig.savefig("figures/fig2_matrices.png", dpi=170); plt.close(fig)
+fig.tight_layout(); fig.savefig("figures/fig4_matrices.png", dpi=170); plt.close(fig)
 
-# Fig 3: blast radius -- graph shading + boxed D support
+# Fig 5: blast radius -- graph shading + boxed D support
 fig, axs = plt.subplots(1, 2, figsize=(11.5, 3.6), gridspec_kw={"width_ratios":[1.35,1]})
 draw_graph(axs[0], E_act, "Anc$^{*}$(Svc) (orange)  ×  Desc$^{*}$(RepoB) (blue)",
            defect=("Svc","RepoB"),
            shade_anc={NODES[i] for i in Anc}, shade_desc={NODES[j] for j in Desc})
 draw_D(axs[1], D, "support(D) ⊆ Anc×Desc  (Thm 2)", box_rc=(sorted(Anc), sorted(Desc)))
-fig.tight_layout(); fig.savefig("figures/fig3_blast_radius.png", dpi=170); plt.close(fig)
+fig.tight_layout(); fig.savefig("figures/fig5_blast_radius.png", dpi=170); plt.close(fig)
 
-# Fig 4: smoothness loop -- three D states + energy strip
+# Fig 6: smoothness loop -- three D states + energy strip
 fig, axs = plt.subplots(1, 3, figsize=(12.5, 3.9))
 draw_D(axs[0], D,       "Iteration 0: NOT SMOOTH\n6 bulges  (‖D‖₁=6, C=1)")
 draw_D(axs[1], D_naive, "Iteration 1 (naive fix): NOT SMOOTH\n3 bulges remain, dent created  (‖D‖₁=4, C=1)")
 draw_D(axs[2], D_fix,   "Iteration 2 (correct fix): SMOOTH\n‖D‖₁=0, C=0")
-fig.tight_layout(); fig.savefig("figures/fig4_smoothness_loop.png", dpi=170); plt.close(fig)
+fig.tight_layout(); fig.savefig("figures/fig6_smoothness_loop.png", dpi=170); plt.close(fig)
 
 print("\nfigures written:", sorted(os.listdir("figures")))
 print("ALL ASSERTIONS PASSED")
