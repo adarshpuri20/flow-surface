@@ -109,6 +109,8 @@ different assignments yield differently-shaped surfaces with identical defect co
 Sphericity itself is layout-invariant — $r \equiv 1$ under every assignment iff
 $D = 0$ — so the smooth case is exactly the case in which the caveat does not bite.
 
+![Fig 8 — §5's synthetic example rendered radially: bulges push outward, the naive fix's dent pulls inward, the correct fix restores the sphere](figures/fig8_sphere_topology.png)
+
 **Definition 4 (Plane-level deformation).** $d = A - A^{*}$ is the *edge-level*
 deformation: direct communications that violate or omit declared planes, independent
 of reachability. §4 shows $d \neq 0$ does not imply $D \neq 0$; the two granularities
@@ -327,6 +329,68 @@ warning: a fix that improves the aggregate can still deform a neighbor.
 
 ---
 
+## 5b. The real deformation: cal.diy PR #29724 (all values computed)
+
+§5's system is synthetic. This section computes the same objects from a real, merged
+production change — cal.diy PR #29724, the subject of this marketplace's example review
+(`examples/cal-diy-pr-29724/`). Node and edge lists come from a two-commit evidence
+extraction whose 127 file:line citations were each re-verified against the repository;
+`verify_5b.py` recomputes and asserts everything below.
+
+**The declaration.** Real repositories rarely declare $A^{*}$. Here the PR's own base
+commit serves as the declaration: $A^{*}$ := the graph at `f3284f581f` (pre-refactor),
+$A$ := the graph at `ca90ca2c94` (post-refactor). $D$ then measures exactly what one
+merged PR deformed. BASE against itself gives $D = 0$ **by construction** — that panel
+of Figure 9 demonstrates the rendering, not a nontrivial result: a real production
+system's smooth state, drawn as the sphere §1.1 says it is.
+
+**Two approximation decisions, declared.** (1) The BASE inline query and the HEAD
+repository method are identified as one node (`credQuery`): the change is an
+extract-method refactor, and treating them as distinct nodes would record the rename
+itself as spurious deformations. (2) Dependency injection is excluded from both
+models: the extraction proved the new repository class is registered in no DI module
+(a tree-wide grep at HEAD returns nothing), so the call edge into it is static and no
+di-resolved edge enters this neighborhood. The exclusion is a declared choice, not an
+omission. (The same extraction found the *canonical* credential repository bound to
+its DI token by two twin modules, one of them importer-less — the declared
+architecture itself can be ambiguous, which is §8's second limitation in the wild.)
+
+**Model A — component granularity** (9 nodes: two consumers, the orchestrator, the
+query/repository node, the transform, the enrich stub, the app filter, the datastore,
+the shared select). At plane level the refactor deletes `srv→build` and adds
+`credQuery→build`: $\lVert d \rVert_{1} = 2$. At flow level the deletion is
+**invisible** — `srv` still reaches `build` through the repository — and $D$ contains
+exactly one bulge, (`credQuery`, `build`): $\lVert D \rVert_{1} = 1$, zero dents.
+This is §4's plane/flow distinction occurring in merged production code: an
+architectural edge deletion that reachability cannot see.
+
+**Model B — branch resolution** (11 nodes: the same neighborhood with the user and
+else branches as nodes). At BASE, raw rows reach both branches and only the else
+branch applies the delegation-nulling transform; at HEAD the repository applies it
+unconditionally, so transformed rows reach both branches. $D$ contains four
+deformations: bulges (`build`,`ifBranch`), (`build`,`elseBranch`), (`build`,`enrich`)
+and a dent (`elseBranch`,`build`). The bulge (`build`,`ifBranch`) **is** the
+branch-widening the example review's blind run surfaced, expressed as geometry: the
+transform now reaches a branch it never previously touched. The dent records the
+mirror image — the else branch no longer invokes the transform; the edge between them
+reversed direction.
+
+**The cross-model finding.** Model A's index space does not contain the branch nodes,
+so the pair (`build`,`ifBranch`) is not merely undetected there — it is
+**inexpressible**. A reviewer at component granularity sees one benign-looking bulge
+(a query helper now calls a shaping function) and cannot see the branch-widening at
+all. That is §8's granularity limitation — "findings are only as sharp as the chosen
+resolution" — as a computed instance rather than a caveat.
+
+**Runtime status.** The extraction also verified an absence: no production reader of
+the nulled field exists downstream of this path. Model B's bulge is therefore real at
+graph level and latent at runtime — the geometry records the deformation; whether it
+is observable today depends on consumers the graph shows to be absent.
+
+![Fig 9 — the real deformation, rendered radially: BASE as the sphere; Model A's single bulge; Model B's branch-widening](figures/fig9_real_deformation_spheres.png)
+
+---
+
 ## 6. What the theorems buy the operational review
 
 | Theorem | Grounds | Operational consequence |
@@ -396,6 +460,11 @@ language-model agent can run against a real diff with evidence obligations.
 characterization, cut counts and energies, final $D = 0$), and regenerates all four
 figures. The script has no dependencies beyond numpy and matplotlib and finishes in
 under a second. If any assertion fails, this document is wrong.
+
+`verify_5b.py` does the same for §5b's real-code matrices and Figure 9.
+`sphere_test.py` and `visualize3d.py` are rendering-only (Figures 5–8): they assert
+nothing and compute no new claims. All scripts are standalone — none imports another —
+so the asserted artifacts stay separate from the presentational ones.
 
 ---
 
