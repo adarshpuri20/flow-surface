@@ -180,6 +180,26 @@ A deterministic LOW/MEDIUM/HIGH rule follows, e.g.:
 - else **MEDIUM** if $\beta \geq \tau$ for a chosen threshold $\tau$;
 - else **LOW**.
 
+**Corollary 2.1 (Multi-edge changes — the naive union fails).** Theorem 2 is stated
+and proved for a *single* edge addition, and remains correct. Real diffs add several
+edges, and the tempting extension — union the boxes
+$\bigcup_k \mathrm{Anc}(u_k) \times \mathrm{Desc}(v_k)$, all computed in the
+*original* closure — **does not bound the deformation**. Minimal counterexample
+($n=3$, $A^{*}$ empty): add $(0,1)$ and $(1,2)$; the pair $(0,2)$ is deformed but lies
+in neither box, because the witnessing path chains through *both* new edges — the
+cross term is structurally absent from every per-edge box. Empirically the naive
+union fails in 264 of 1,500 randomized multi-edge trials, roughly 18%
+(`verify_theorems.py`, deterministic seeds).
+
+The correct rule is **sequential**: order the added edges arbitrarily, apply Theorem 2
+one edge at a time *recomputing the closure between steps* — so each step is genuinely
+a single-edge addition and each box is computed in the current closure — and union the
+per-step boxes. This holds by induction on Theorem 2 and passes 1,500 randomized
+trials with zero violations. The consequence is safety-relevant: the naive union
+*under-estimates* blast radius, and an under-estimated radius can classify as LOW a
+change whose true reach is MEDIUM — letting a `NOT SMOOTH` result ship that the
+stopping rule should have blocked (§6).
+
 **Theorem 3 (Fix deformation).** *Let $A' = A - e_{uv}$ (delete one edge). Then entry
 $(i,j)$ flips $1 \to 0$ iff **every** $i \rightsquigarrow j$ path in $A$ traverses
 $(u,v)$.*
@@ -415,7 +435,7 @@ is observable today depends on consumers the graph shows to be absent.
 | Theorem | Grounds | Operational consequence |
 | :--- | :--- | :--- |
 | 1 Polarity | The dent/bulge asymmetry | Additive diffs get bulge-hunting gates (2, 7); subtractive diffs get dent-hunting gates (4); mixed diffs get both. The asymmetry is structural, not anecdotal. |
-| 2 Localization | Blast radius | LOW/MEDIUM/HIGH is computable from $\mathrm{Anc} \times \mathrm{Desc}$ + the compartment signal; the stopping rule `MEDIUM + NOT SMOOTH = BLOCK` operates on a number, not a feeling. |
+| 2 Localization + Cor. 2.1 | Blast radius | LOW/MEDIUM/HIGH is computable from the **sequential** per-edge $\mathrm{Anc} \times \mathrm{Desc}$ union (Cor. 2.1 — the naive union under-estimates radius on multi-edge diffs and can let a MEDIUM ship as LOW); the stopping rule `MEDIUM + NOT SMOOTH = BLOCK` operates on a number, not a feeling. |
 | 3 Fix deformation | Gate 11 / the loop | "Did the fix move the discontinuity?" is one closure recompute + one matrix diff. Decidable per iteration. |
 | 4 Cut count | Gate 7 isolation | Tenant isolation = zero Laplacian energy of the scope signal (or exactly the declared-gateway count). |
 | §4 granularity | Gate 1 vs Gate 7 | Plane violations can be flow-invisible; both matrices are reviewed because neither subsumes the other. |
@@ -481,6 +501,12 @@ figures (Figures 3–6). The script has no dependencies beyond numpy and matplot
 under a second. If any assertion fails, this document is wrong.
 
 `verify_5b.py` does the same for §5b's real-code matrices and Figure 9.
+`verify_theorems.py` tests the theorems as universally quantified *properties* rather
+than as instances: roughly 13,400 randomized trials under deterministic seeds plus
+seven degenerate edge cases, Theorem 3 verified by independent path enumeration
+rather than by the closure it is stated in, and Corollary 2.1's minimal
+counterexample and sequential bound locked in as permanent assertions. It produces
+no figures and no new claims.
 `sphere_test.py` and `visualize3d.py` are rendering-only (Figures 1, 2, 7, and 8): they assert
 nothing and compute no new claims. All scripts are standalone — none imports another —
 so the asserted artifacts stay separate from the presentational ones.
