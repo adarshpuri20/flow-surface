@@ -6,7 +6,7 @@ The deformation matrix D is a scalar field over the (source, target) index space
 That makes it a *surface* in the one place the word is literal rather than metaphorical:
 z = D[i][j], bulges are peaks (+1), dents are valleys (-1), smooth is the flat plane z=0.
 
-Standalone by design: verify.py is the asserted artifact and is not imported or modified.
+Standalone by design: verify.py is the asserted artifact and is not imported here.
 Run: python3 visualize3d.py   (writes figures/fig2_*.png, fig7_*.png, fig8_*.png)
 """
 import numpy as np
@@ -129,4 +129,4 @@ plt.close(fig)
 print("wrote figures/fig7_surface_3d_loop.png")
 print("wrote figures/fig8_moved_discontinuity_3d.png")
 print("wrote figures/fig2_illustrative_interpolation.png")
-print("\nnote: verify.py untouched; this script asserts nothing and computes no new claims.")
+print("\nnote: this script asserts nothing and computes no new claims.")

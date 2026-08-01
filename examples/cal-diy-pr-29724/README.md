@@ -55,10 +55,9 @@ demonstrates, the drift is documented here rather than edited away:
   output template never defines (its row vocabulary is `APPROVE` /
   `APPROVE_WITH_NOTES` / `BLOCK`, plus `SKIPPED`), and the split between `APPROVE`
   and `CONCERNS` is not consistent across identical finding profiles. Read
-  `CONCERNS` as `APPROVE_WITH_NOTES`. v0.1.2 will either add `CONCERNS` to the
-  template enum or normalize the runner to the documented set. *(Resolved in v0.1.2:
-  `CONCERNS` joined the documented verdict set, defined as a substantive worry that
-  does not block on its own.)*
+  `CONCERNS` as `APPROVE_WITH_NOTES`. *(Resolved in v0.1.2: `CONCERNS` joined the
+  documented verdict set, defined as a substantive worry that does not block on its
+  own.)*
 - **Per-gate counts.** The gate table's per-row counts sum higher than the
   deduplicated findings list, because cross-gate convergences are only partially
   annotated (#2 → Gates 4+11, #5 → Gates 4+6). The findings list is authoritative.

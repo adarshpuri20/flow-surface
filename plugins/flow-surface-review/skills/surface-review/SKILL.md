@@ -106,9 +106,8 @@ This is the gate that operationalises "fixes deform the surface."
 
 ## The Smoothness Loop
 
-> **Naming note.** In earlier internal versions this was called "Gate 11 Meta", which
-> collided with Gate 11 (Regression Risk). It is not a gate — it is a convergence loop
-> that runs *after* all eleven gates. Kept distinct here on purpose.
+The smoothness loop is not a gate — it is a convergence loop that runs *after* all
+eleven gates.
 
 ### Surface-aware MEDIUM escalation
 

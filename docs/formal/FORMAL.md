@@ -3,7 +3,8 @@
 **Deformation matrices, blast-radius localization, and the smoothness loop as monotone descent**
 
 *Companion to the flow-surface plugin marketplace. Every number in this document is
-produced by `verify.py`; run it to reproduce all matrices, theorem checks, and figures.*
+produced by `verify.py`; run it to reproduce all matrices, theorem checks, and the
+asserted figures (§9 maps every figure to its generating script).*
 
 ---
 
@@ -32,7 +33,8 @@ Laplacian energy. A worked seven-node multi-tenant example exercises every theor
 with deterministic matrices, including a numerically verified instance of a fix that
 reduces total deformation while still moving the discontinuity. The theory is then
 tested against a real merged production change — cal.diy PR #29724, reconstructed
-from adversarially verified file:line evidence — computed at two granularities
+from independently re-verified file:line evidence published with the paper — computed
+at two granularities
 (§5b). The component-level model yields a single real bulge and a production
 instance of §4's plane-level deformation that reachability cannot see; the
 branch-level model expresses the PR's actual defect, and the component-level model
@@ -373,7 +375,9 @@ machinery; this section runs the same machinery against production code.
 §5's system is synthetic. This section computes the same objects from a real, merged
 production change — cal.diy PR #29724, the subject of this marketplace's example review
 (`examples/cal-diy-pr-29724/`). Node and edge lists come from a two-commit evidence
-extraction whose 127 file:line citations were each re-verified against the repository;
+extraction, published with every citation at
+[`extraction-pr29724.md`](extraction-pr29724.md); its 127 file:line citations were
+each independently re-checked against the repository before use.
 `verify.py --real` recomputes and asserts everything below.
 
 **The declaration.** Real repositories rarely declare $A^{*}$. Here the PR's own base
