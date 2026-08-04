@@ -63,6 +63,38 @@ Three failure modes this prevents, each observed in a real run:
 This is where the method is weakest: it locates deformation reliably and prices it unreliably,
 because pricing needs the before-state and the before-state is exactly what a diff under-samples.
 
+## Blast-radius discipline
+
+The companion question. Before-state discipline asks *what was true before*; this asks *who
+else is affected*. A diff under-samples both, and for the same reason: it shows the changed
+file, not the file's consumers.
+
+Any finding about a change to a **shared** component — a repository, a helper, a middleware,
+anything with more than one caller — carries an implicit claim about its consumer set. That
+claim must be established, not assumed, and three things make it easy to get wrong.
+
+- **Grep by resolution, not by string.** A call site can be reached through a barrel
+  re-export, an interface the class implements, a DI registration, or a container binding,
+  none of which contain the symbol you searched for. Chase each: does an `index.ts` re-export
+  it? Does it have an `implements` clause, and who consumes *that* type? Is it registered in a
+  module? A "sole caller" conclusion drawn from one grep of one name is not established.
+- **Similarly-named siblings inflate the estimate.** A near-identical name in a different
+  package, with a different method surface and its own consumers, will dominate your grep
+  results and make a one-call-site change look like a wide one. Confirm each hit resolves to
+  the symbol you actually changed before counting it. *Observed:* a `PrismaCredentialRepository`
+  with exactly one production caller, sitting alongside a `CredentialRepository` in another
+  package with its own DI module and three consumers. Grepping the shared substring sized the
+  blast radius wildly wrong in the alarming direction.
+- **Reachability is not exposure — price them apart.** Widening what a component returns
+  matters only if something downstream *reads* it. Trace forward from each consumer and
+  classify: does it read the field, forward it into a response or log, or ignore it? A field
+  no one reads is **latent risk**, worth a note. A field that reaches a client is **active
+  exposure**, worth a block. Collapsing the two inflates severity exactly the way a
+  diff-shaped view already tends to.
+
+The asymmetry to hold: an under-estimated blast radius ships a bulge, and an over-estimated
+one cries wolf. Both are failures, but only the first is silent.
+
 ---
 
 ## Tier 1 — Point quality
