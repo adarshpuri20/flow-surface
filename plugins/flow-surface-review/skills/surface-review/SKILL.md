@@ -95,6 +95,40 @@ claim must be established, not assumed, and three things make it easy to get wro
 The asymmetry to hold: an under-estimated blast radius ships a bulge, and an over-estimated
 one cries wolf. Both are failures, but only the first is silent.
 
+## Orthogonality discipline
+
+The third question, and the one that runs *across* findings rather than inside any one of them.
+Before-state discipline asks whether a finding is deliberate. Blast radius asks who else it
+touches. Orthogonality asks whether two findings are **one thing counted twice**.
+
+Gates report independently. Nothing in a gate's output says whether its finding occupies the
+same region of the surface as another gate's. So a single design decision spread across N call
+sites can arrive as N findings, and a severity roll-up that sums them will price one decision
+as though it were a pile of defects.
+
+After collecting findings and before pricing them, compute each finding's **support**: the set
+of planes and node pairs in `D` it actually touches. Then:
+
+- **Disjoint supports mean independent findings.** Price them separately.
+- **Overlapping supports mean one region.** Price the *region* once, from its worst
+  consequence. Do not sum the reports.
+- **Findings that reduce to the same rule are one finding.** If several findings all restate a
+  single policy applied consistently, report the policy once and say where it applies.
+
+The sign test is the cheap tell: if two findings about the same code point in **opposite**
+directions, they are almost certainly one policy scored twice rather than two defects.
+*Observed:* one finding argued a rate limit was too tight and another argued the same limit was
+exploitable. Same policy, same call sites, opposite signs, counted as two. Four reported
+defects reduced to one design decision.
+
+**Merge the pricing, not the reporting.** This is where the rule goes wrong if applied
+carelessly. Two findings can share a plane and still be genuinely distinct in kind: a dent and
+a bulge at the same boundary are one region and two different problems, and collapsing them
+into a single line loses the one a maintainer needs. Report both. Price the region once.
+
+The two disciplines above catch errors *within* a finding; this one catches an error in the
+arithmetic *between* them. A verdict is not the sum of its findings.
+
 ---
 
 ## Tier 1 — Point quality
