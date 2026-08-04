@@ -491,6 +491,22 @@ language-model agent can run against a real diff with evidence obligations.
 - **Granularity is a modeling choice.** Components can be classes, modules, or
   services; edges can be calls, imports, or network hops. The theorems hold at any
   granularity, but *findings* are only as sharp as the chosen resolution.
+- **Locating a deformation and pricing it are different problems.** Theorem 2 bounds
+  *where* a change's effects can appear, and it needs only the changed edges. Deciding
+  what a deformation is *worth* is a different question, and a harder one: whether a
+  region is a regression, an intended redesign, or a pre-existing condition merely
+  relocated is a fact about $R$ *before* the change — which a diff-shaped view
+  under-samples by construction. A reviewer reading the diff plus the current tree can
+  compute $D$ at HEAD correctly and still misattribute every entry in it. In one
+  measured instance (a merged rate-limit refactor in a production TypeScript codebase,
+  six findings), independently re-deriving the pre-change closure from the base commit
+  downgraded all six and withdrew two: one had counted the deletion of an
+  authentication-bypass as a harm, and one asserted a baseline that a `grep` of the base
+  commit contradicts. The corrective is procedural rather than mathematical. The prior
+  state must be extracted from the base commit as its own computation, never inferred
+  from the hunk, and severity assigned before that extraction is provisional. This is
+  the operational cousin of "$A^{*}$ must be declared": $D$ measures distance to an
+  intended architecture, and *nothing in $D$ assigns blame for it*.
 - **The 3-iteration cap is engineering.** Termination of the descent is proved;
   convergence to $0$ within any fixed budget is not, and cannot be in general.
 

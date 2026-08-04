@@ -36,6 +36,33 @@ Per-gate verdicts come from a fixed vocabulary: `APPROVE`, `APPROVE_WITH_NOTES`,
 `CONCERNS` (a substantive worry that does not block on its own — must be backed by at
 least one finding), `BLOCK`, or `SKIPPED(reason)`.
 
+## Before-state discipline
+
+Any finding that says a change *broke*, *tightened*, *widened*, *removed*, or *regressed*
+something is asserting a fact about the code **before** the change. That fact is not in the
+diff. A diff shows which lines moved. It does not show what the prior behaviour was, how
+widespread a pattern already was, or whether the thing removed was load-bearing or was itself
+a defect.
+
+So before assigning severity to any such finding, re-derive the prior state independently:
+`git show <base>:<file>`, and read the **whole** prior function or module, not the hunk. Until
+that is done, report the mechanism but mark the severity **provisional** — and a `BLOCK` may
+never rest on a finding whose before-state has not been re-derived.
+
+Three failure modes this prevents, each observed in a real run:
+
+- **Deliberate policy read as regression.** A change that applies one consistent new rule
+  across N call sites is one design decision, not N defects. If several findings all reduce to
+  the same rule, report the rule once.
+- **A removed bypass mourned as a loss.** Deleting an exemption that let some callers skip a
+  control is *hardening*. Read from the diff alone it looks like a control being taken away,
+  which inverts the finding.
+- **A miscounted baseline.** "Only two call sites did X before this change" is a claim about
+  the base commit. Grep the base commit.
+
+This is where the method is weakest: it locates deformation reliably and prices it unreliably,
+because pricing needs the before-state and the before-state is exactly what a diff under-samples.
+
 ---
 
 ## Tier 1 — Point quality
