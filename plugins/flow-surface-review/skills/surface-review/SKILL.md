@@ -30,7 +30,11 @@ consumed most of the main one. Where subagents aren't available, run them sequen
 | Loop | Did our fixes deform anything? | Smoothness |
 
 Skip rules are per-gate and stated below. A skipped gate is recorded as `SKIPPED` with its
-reason — never silently omitted.
+reason — never silently omitted. A `SKIPPED` that is not a skip-rule skip is legal in two
+further cases only: a named missing capability that leaves nothing to examine, or a second
+examination pass that still yielded no discriminating observation. Either goes in **Known debt
+carried forward** with a revisit trigger and caps the overall verdict at
+`APPROVE_WITH_NOTES`. See the tightened rule in `references/output-templates.md`.
 
 Per-gate verdicts come from a fixed vocabulary: `APPROVE`, `APPROVE_WITH_NOTES`,
 `CONCERNS` (a substantive worry that does not block on its own — must be backed by at
@@ -143,6 +147,45 @@ grounding in the formalism, and none should be read into it.
 
 The two disciplines above catch errors *within* a finding; this one catches an error in the
 arithmetic *between* them. A verdict is not the sum of its findings.
+
+## What a findings-only step cannot see
+
+A property of this pipeline worth knowing when you decide what to trust, and the reason for
+the falsifier requirement under **Outputs** below and in `references/output-templates.md`.
+
+Any review step whose **sole input is the previously reported finding set** can detect the
+errors of *commission* that are visible from the findings' own stated evidence — a
+double-count, a severity a finding's evidence does not support, two findings that contradict
+each other. It cannot detect a commission whose falsity lives in the code: a finding that
+misreads the before-state looks identical to a true one from inside the set. And it is blind
+by construction to errors of *omission*, because a region no gate reported cannot appear in a
+set assembled from what the gates reported. The blindness comes from the step's input, not
+from its subject: a step that re-reads the code makes omissions visible again even though it
+is still reviewing a review.
+
+In this pipeline the findings-only steps are the double-counting tests and severity roll-up.
+The self-consistency check is deliberately not one of them, because it also reads the gate
+rows' clearances, so it can see a gate that declined to look — though still not what a looking
+gate missed. The gates read code and enumerate from it, so they do not carry the blindness;
+the smoothness loop re-reads code but enumerates from the finding set, so it escapes the
+commission blindness and inherits the omission one. The corrective is procedural: at least one
+step must enumerate what to examine
+**from the code**, as its own computation, and never from the finding set; and no clean
+verdict may rest on a findings-only pass alone.
+
+*Observed:* in a verification pass of twelve agents, the eleven that took the finding set as
+input all missed a user-visible defect the run had explicitly cleared; the twelfth, reading
+the whole change instead, found it. Later, two independent audits given the run's
+**clearances** and the target repository, and told nothing about what to look for, each
+recovered that defect and a second one — a key built from a raw forwarded-for header, keying
+policies that assumed colon-free identifiers — that no agent in the twelve had examined. The
+clearances did not supply the defects; they supplied the enumeration of where to read.
+
+This is an ordinary property of any filter reading its predecessor's output, and it is
+claimed as nothing more: no grounding in the formalism, and no analogy to anything in it. Do
+not describe review errors in the surface vocabulary — dent, bulge, deformation, smooth.
+Those terms are bound in the theory skill and in `docs/formal/FORMAL.md` to the system under
+review, and rebinding them to the review makes the confusion permanent.
 
 ---
 
@@ -265,6 +308,15 @@ marketplace repo's `examples/cal-diy-pr-29724/` run, which exited exactly this w
 
 A `BLOCK` is not advisory.
 
+Coverage can only lower the table's disposition, never raise it. A change with any *not
+examined* gate ships at best as `APPROVE_WITH_NOTES`, with each gap in **Known debt carried
+forward** under a revisit trigger; a gate marked *never skip* that was not examined does not
+ship at all, whatever the table says. Note what coverage does **not** tell you: its cleared
+count is self-reported, and a cleared gate is one that stated a clearance, not one anything
+verified. A missing or boilerplate falsifier is never itself a
+`BLOCK`: it is a defect in the review, not in the code, and blocking a merge on review prose
+trains prose that unblocks.
+
 ---
 
 ## Outputs
@@ -279,7 +331,15 @@ Two artifacts. Templates in `references/output-templates.md`.
 Before writing the artifact, run a **self-consistency check**: the per-gate finding
 counts in the gate table must reconcile with the deduplicated findings-by-severity
 sections. Annotate every cross-gate convergence explicitly (finding N → Gates X+Y) so
-the two views sum consistently; the findings list is authoritative.
+the two views sum consistently; the findings list is authoritative. And every row that
+clears its gate — `APPROVE`, `APPROVE_WITH_NOTES`, or `CONCERNS` — must carry evidence and
+a falsifier naming both the artifact examined and the observation that discriminated it, or
+an explicit cross-reference to the row that states one. A row that fails this **has not
+cleared its gate**: examine it once more, and if a second pass still yields no discriminating
+observation, record `SKIPPED(no discriminating observation obtainable)`. This check reads
+clearances as well as findings, so it can catch a gate that declined to look. It cannot catch
+what a looking gate missed, and it cannot catch a fabricated falsifier — see the limits stated
+in `references/output-templates.md`.
 
 **No smoothness artifact means the change has not converged.** Do not merge on the
 strength of passing gates alone — the gates find deformations, the loop proves they were
