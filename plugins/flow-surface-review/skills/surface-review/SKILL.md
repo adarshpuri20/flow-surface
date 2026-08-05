@@ -95,36 +95,51 @@ claim must be established, not assumed, and three things make it easy to get wro
 The asymmetry to hold: an under-estimated blast radius ships a bulge, and an over-estimated
 one cries wolf. Both are failures, but only the first is silent.
 
-## Orthogonality discipline
+## Double-counting discipline
 
 The third question, and the one that runs *across* findings rather than inside any one of them.
 Before-state discipline asks whether a finding is deliberate. Blast radius asks who else it
-touches. Orthogonality asks whether two findings are **one thing counted twice**.
+touches. This one asks whether two findings are **one thing counted twice**.
 
-Gates report independently. Nothing in a gate's output says whether its finding occupies the
-same region of the surface as another gate's. So a single design decision spread across N call
-sites can arrive as N findings, and a severity roll-up that sums them will price one decision
-as though it were a pile of defects.
+Gates report independently. Nothing in a gate's output says whether its finding describes the
+same decision as another gate's. So a single design decision spread across N call sites can
+arrive as N findings, and a severity roll-up that sums them will price one decision as though
+it were a pile of defects.
 
-After collecting findings and before pricing them, compute each finding's **support**: the set
-of planes and node pairs in `D` it actually touches. Then:
+Location overlap is evidence in neither direction, so do not start there: a policy with many
+call sites produces different-file findings that are one decision, and one line can host a
+dent and a bulge that are two problems. After collecting findings and before pricing them,
+run two separate tests on every cluster of related findings:
 
-- **Disjoint supports mean independent findings.** Price them separately.
-- **Overlapping supports mean one region.** Price the *region* once, from its worst
-  consequence. Do not sum the reports.
-- **Findings that reduce to the same rule are one finding.** If several findings all restate a
-  single policy applied consistently, report the policy once and say where it applies.
+- **The decision test.** Would reverting one thing make all of these findings go away? Then
+  they describe one decision.
+- **The fix test.** Does repairing one of them repair the others? Then they need one fix.
 
-The sign test is the cheap tell: if two findings about the same code point in **opposite**
-directions, they are almost certainly one policy scored twice rather than two defects.
-*Observed:* one finding argued a rate limit was too tight and another argued the same limit was
-exploitable. Same policy, same call sites, opposite signs, counted as two. Four reported
-defects reduced to one design decision.
+The tests can disagree, and the disagreement case is where the discipline earns its keep:
 
-**Merge the pricing, not the reporting.** This is where the rule goes wrong if applied
-carelessly. Two findings can share a plane and still be genuinely distinct in kind: a dent and
-a bulge at the same boundary are one region and two different problems, and collapsing them
-into a single line loses the one a maintainer needs. Report both. Price the region once.
+- **One decision, one fix** — merge: one finding, priced once from its worst consequence.
+- **Two decisions** — independent findings, priced separately, wherever they sit in the code.
+- **One decision, several fixes** — report every finding (facets inside one merged entry is
+  fine), price the decision once from its worst consequence, and list every fix. The pricing
+  merge must never hide a needed fix: a dent and a bulge at the same seam that fail the fix
+  test are one decision to revisit and two repairs to make, and collapsing them loses the one
+  a maintainer needs. (Some same-seam pairs pass the fix test — one reversal clears both —
+  which is why the test runs instead of the shape deciding.)
+
+Two cheap tells that shortcut the decision test — the fix test still runs on whatever they
+merge:
+
+- **The sign test.** If two findings about the same code point in **opposite** directions,
+  they are almost certainly one policy scored twice rather than two defects. *Observed:* one
+  finding argued a rate limit was too tight and another argued the same limit was exploitable.
+  Same policy, same call sites, opposite signs, counted as two. Four reported defects reduced
+  to one design decision.
+- **Same-rule collapse.** If several findings all restate a single policy applied
+  consistently, report the policy once and say where it applies.
+
+Scope, stated plainly: this is a deduplication heuristic, earned from operational evidence — a
+blind run that priced one rate-limit policy as four defects — not a theorem. It claims no
+grounding in the formalism, and none should be read into it.
 
 The two disciplines above catch errors *within* a finding; this one catches an error in the
 arithmetic *between* them. A verdict is not the sum of its findings.

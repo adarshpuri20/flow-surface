@@ -2,7 +2,7 @@
   "name": "flow-surface-review",
   "displayName": "Flow Surface Review",
   "description": "An 11-gate cross-file code review that checks what your change deformed, not just what it touched.",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "author": { "name": "adarshpuri20" },
   "license": "MIT",
   "keywords": ["code-review","security","quality-gates"]
